@@ -1,6 +1,17 @@
 const inputAdd = document.getElementById("input-add-todo");
 const todoCtn = document.getElementById("todo-container");
 
+inputAdd.onkeyup = (event) => {
+  if (event.key !== "Enter") return;
+  else if (inputAdd.value == "") {
+    alert("Todo cannot be empty");
+    return;
+  }
+  addTodo(inputAdd.value, false);
+  inputAdd.value = "";
+  saveTodo();
+};
+
 function addTodo(title, completed) {
   //create a div that holds todo title, done button, delete button
   const div = document.createElement("div");
@@ -65,16 +76,6 @@ function saveTodo() {
   localStorage.setItem("todoListdata", dataStr);
 }
 
-inputAdd.onkeyup = (event) => {
-  if (event.key !== "Enter") return;
-  else if (inputAdd.value == "") {
-    alert("Todo cannot be empty");
-    return;
-  }
-  addTodo(inputAdd.value, false);
-  inputAdd.value = "";
-  saveTodo();
-};
 
 function loadTodo() {
   const dataStr = localStorage.getItem("todoListdata");

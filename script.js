@@ -1,12 +1,6 @@
 const inputAdd = document.getElementById("input-add-todo");
 const todoCtn = document.getElementById("todo-container");
 
-inputAdd.onkeyup = (event) => {
-  if (event.key !== "Enter") return;
-
-  //your code here
-};
-
 function addTodo(title, completed) {
   //create a div that holds todo title, done button, delete button
   const div = document.createElement("div");
@@ -27,22 +21,68 @@ function addTodo(title, completed) {
   const deleteBtn = document.createElement("button");
   deleteBtn.innerText = "Delete";
   deleteBtn.className = "btn btn-danger";
+  doneBtn.style.display = "none";
+  deleteBtn.style.display = "none";
+  todoCtn.prepend(div);
+  div.append(span);
+  div.append(doneBtn);
+  div.append(deleteBtn);
+  inputAdd.value = "";
+  div.onmouseover = () => {
+    doneBtn.style.display = "";
+    deleteBtn.style.display = "";
+  };
+  div.onmouseout = () => {
+    doneBtn.style.display = "none";
+    deleteBtn.style.display = "none";
+  };
 
-  //your code here
-  //append todo to HTML...
-  //define buttons event...
+  doneBtn.onclick = () => {
+    if (span.style.textDecoration === "line-through")
+      span.style.textDecoration = "none";
+    else {
+      span.style.textDecoration = "line-through";
+    }
+    saveTodo();
+  };
+  deleteBtn.onclick = () => {
+    todoCtn.removeChild(div);
+    saveTodo();
+  };
+  saveTodo();
 }
 
 function saveTodo() {
   const data = [];
   for (const todoDiv of todoCtn.children) {
-    //your code here
+    const todoObj = {};
+    todoObj.title = todoDiv.children[0].innerText;
+    todoObj.completed =
+      todoDiv.children[0].style.textDecoration === "line-through";
+    data.unshift(todoObj);
   }
-  //your code here
+  const dataStr = JSON.stringify(data);
+  localStorage.setItem("todoListdata", dataStr);
 }
 
+inputAdd.onkeyup = (event) => {
+  if (event.key !== "Enter") return;
+  else if (inputAdd.value == "") {
+    alert("Todo cannot be empty");
+    return;
+  }
+  addTodo(inputAdd.value, false);
+  inputAdd.value = "";
+  saveTodo();
+};
+
 function loadTodo() {
-  //your code here
+  const dataStr = localStorage.getItem("todoListdata");
+  const data = JSON.parse(dataStr);
+
+  for (const todoObj of data) {
+    addTodo(todoObj.title, todoObj.completed);
+  }
 }
 
 loadTodo();
